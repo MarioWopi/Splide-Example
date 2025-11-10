@@ -1,16 +1,145 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 🧭 Carrusel con React y Splide
 
-Currently, two official plugins are available:
+Este proyecto implementa un **carrusel personalizado** utilizando [`@splidejs/react-splide`](https://splidejs.com/), con controles manuales, paginación dinámica y navegación programática.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Características
 
-## React Compiler
+* ✅ Carrusel funcional con **autoplay** y **rebobinado automático**.
+* 🎯 Control total mediante botones de navegación (anterior, siguiente e ir a una diapositiva específica).
+* 🔢 Generación dinámica de **paginación personalizada**.
+* 🧩 Totalmente controlado con React Hooks (`useState`, `useRef`, `useEffect`).
+* 🎨 Estilizado con **Tailwind CSS** para una apariencia moderna y adaptable.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📦 Instalación
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Clona el repositorio y ejecuta los siguientes comandos:
+
+```bash
+npm install
+npm run dev
+```
+
+Asegúrate de tener instalado el paquete de Splide:
+
+```bash
+npm install @splidejs/react-splide
+```
+
+Y si usas Tailwind, revisa que esté configurado correctamente en tu proyecto.
+
+---
+
+## 💡 Uso del componente principal
+
+El componente principal (`App.jsx`) implementa la lógica del carrusel.
+
+### 🔧 Importaciones principales
+
+```js
+import { Splide, SplideSlide } from '@splidejs/react-splide';
+import { useEffect, useRef, useState } from 'react';
+```
+
+### ⚙️ Hooks y referencias
+
+* `useState` para controlar:
+
+  * `totalSlides`: número total de slides.
+  * `activeSlide`: slide actualmente activa.
+* `useRef` para obtener una referencia al carrusel y poder usar sus métodos (`go`, `next`, `prev`, etc.).
+* `useEffect` para obtener el número total de slides al montar el componente.
+
+### 🧭 Navegación del carrusel
+
+```js
+const goNext = () => carruselRef.current?.splide.go(">");
+const goPrev = () => carruselRef.current?.splide.go("<");
+const goTo = (index) => carruselRef.current?.splide.go(index);
+```
+
+Permiten avanzar, retroceder o ir directamente a una diapositiva específica.
+
+---
+
+## 🧱 Estructura del JSX
+
+```jsx
+<Splide
+  ref={carruselRef}
+  options={{
+    arrows: false,
+    pagination: false,
+    height: 300,
+    autoplay: true,
+    interval: 5000,
+    rewind: true,
+  }}
+  onMove={(splide) => setActiveSlide(splide.index)}
+  className='w-[300px]'
+>
+  <SplideSlide className="bg-amber-400 flex items-center justify-center text-5xl">1</SplideSlide>
+  <SplideSlide className="bg-red-500 flex items-center justify-center text-5xl">2</SplideSlide>
+  <SplideSlide className="bg-blue-300 flex items-center justify-center text-5xl">3</SplideSlide>
+</Splide>
+```
+
+Cada `SplideSlide` representa una diapositiva.
+Puedes reemplazar su contenido con imágenes, texto u otros componentes.
+
+---
+
+## 🔢 Paginación personalizada
+
+El método `generaraPaginacion()` crea botones de página según la cantidad de slides.
+
+```js
+for (let i = 0; i < totalSlides; i++) {
+  paginas.push(
+    <div
+      key={i}
+      onClick={() => goTo(i)}
+      className={`flex-1 flex items-center justify-center hover:bg-[#cfcfcf93] hover:cursor-pointer duration-200 select-none ${
+        activeSlide == i ? 'bg-[#e6e6e6a4] font-bold text-gray-600' : ''
+      }`}
+    >
+      {i + 1}
+    </div>
+  );
+}
+```
+
+Esto crea una barra inferior con botones numerados que reflejan el slide activo.
+
+---
+
+## 🎮 Controles adicionales
+
+Además de las flechas de navegación, se incluye un botón que lleva directamente al último slide:
+
+```jsx
+<div onClick={() => goTo(2)} className="bg-[#fadc55] p-5 rounded-2xl mt-5 hover:bg-[#d8b104] duration-200 text-xl select-none">
+  Ir al final
+</div>
+```
+
+---
+
+## 🧠 Personalización
+
+Puedes adaptar este carrusel fácilmente:
+
+* Cambia los colores o el tamaño de los slides.
+* Sustituye el contenido de cada `SplideSlide` por componentes dinámicos.
+* Ajusta las **opciones** del carrusel (`autoplay`, `interval`, `rewind`, etc.).
+* Agrega animaciones adicionales con Tailwind o CSS puro.
+
+---
+
+
+## 🧑‍💻 Autor
+
+Desarrollado por **MarioWopi**.
+Si te resulta útil, ¡no olvides dejar una ⭐ en el repositorio!
